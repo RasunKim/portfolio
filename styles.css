@@ -127,7 +127,7 @@ button { font-family: inherit; cursor: pointer; }
 .card-media > .device { margin: auto; }
 /* Web Component phone prototypes: shrink to ~56% so the native 405x864 device
    fits inside a 446x599 tall card. */
-.card-media > kweather-prototype,
+.card-media > openchat-prototype,
 .card-media > kanana-prototype { --device-scale: 0.56; }
 /* Web mockup keeps its compact aspect; centered with empty space around */
 .card-media > .web-mockup {
