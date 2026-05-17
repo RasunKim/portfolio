@@ -3,6 +3,8 @@
 //   <script type="module" src="/prototypes/kweather/kweather.js"></script>
 //   <kweather-prototype></kweather-prototype>
 
+const ASSET_BASE = new URL('../shared/', import.meta.url).href;
+
 const template = document.createElement('template');
 template.innerHTML = /* html */ `
   <style>
@@ -160,7 +162,7 @@ template.innerHTML = /* html */ `
     <div class="notch"></div>
     <div class="screen">
       <div class="status-bar">
-        <img src="/prototypes/shared/status-bar.svg" alt="" />
+        <img src="${ASSET_BASE}status-bar.svg" alt="" />
       </div>
 
       <div class="top">
