@@ -831,7 +831,6 @@ class KananaPrototype extends HTMLElement {
     _channel?.removeEventListener('message', this._onBroadcast);
     document.removeEventListener('visibilitychange', this._onVisibility);
     window.removeEventListener('pageshow', this._onPageshow);
-    this._teardownHoverScroll?.();
   }
   attributeChangedCallback() { this.render(); }
 
@@ -857,74 +856,6 @@ class KananaPrototype extends HTMLElement {
         </div>
       </div>
     `;
-    this._teardownHoverScroll?.();
-    if (screen === 'chatroom') this._setupHoverScroll();
-  }
-
-  _setupHoverScroll() {
-    const sheet = this.shadowRoot.querySelector('.cr-sheet');
-    if (!sheet) return;
-
-    // Speed: pixels per second. The sheet is ~1500–1800px tall; ~60px/s
-    // gives a ~25s read-through, slow enough to scan without feeling stuck.
-    const SPEED = 60;
-    let rafId = null;
-    let lastTs = 0;
-    let userPaused = false;
-    let pauseTimer = null;
-
-    const step = (ts) => {
-      if (!lastTs) lastTs = ts;
-      const dt = (ts - lastTs) / 1000;
-      lastTs = ts;
-      if (!userPaused) {
-        const max = sheet.scrollHeight - sheet.clientHeight;
-        const next = sheet.scrollTop + SPEED * dt;
-        if (next >= max) {
-          // Reached bottom — pause briefly, then loop back to top.
-          sheet.scrollTop = max;
-          userPaused = true;
-          pauseTimer = setTimeout(() => {
-            sheet.scrollTop = 0;
-            userPaused = false;
-            pauseTimer = null;
-          }, 1200);
-        } else {
-          sheet.scrollTop = next;
-        }
-      }
-      rafId = requestAnimationFrame(step);
-    };
-
-    const start = () => {
-      if (rafId != null) return;
-      lastTs = 0;
-      rafId = requestAnimationFrame(step);
-    };
-    const stop = () => {
-      if (rafId != null) cancelAnimationFrame(rafId);
-      rafId = null;
-      if (pauseTimer != null) { clearTimeout(pauseTimer); pauseTimer = null; }
-      userPaused = false;
-    };
-    // If the user scrolls with the wheel, defer to them for a moment.
-    const onWheel = () => {
-      userPaused = true;
-      if (pauseTimer != null) clearTimeout(pauseTimer);
-      pauseTimer = setTimeout(() => { userPaused = false; pauseTimer = null; }, 1500);
-    };
-
-    this.addEventListener('mouseenter', start);
-    this.addEventListener('mouseleave', stop);
-    sheet.addEventListener('wheel', onWheel, { passive: true });
-
-    this._teardownHoverScroll = () => {
-      stop();
-      this.removeEventListener('mouseenter', start);
-      this.removeEventListener('mouseleave', stop);
-      sheet.removeEventListener('wheel', onWheel);
-      this._teardownHoverScroll = null;
-    };
   }
 }
 
