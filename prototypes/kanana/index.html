@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanana Prototype — Screens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <style>
+    :root { --bg: #f5f5f5; --fg: #191919; --muted: #8f8f8f; --blue: #0285ff; --blue-soft: #eaf3ff; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Inter", "Noto Sans KR", -apple-system, sans-serif;
+      padding: 48px 32px 80px;
+    }
+    .page-header {
+      max-width: 1080px;
+      margin: 0 auto 40px;
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .page-header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .featured-note {
+      max-width: 1080px;
+      margin: 0 auto 32px;
+      padding: 14px 18px;
+      background: var(--blue-soft);
+      border-radius: 12px;
+      font-size: 13px;
+      color: #0a4795;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .featured-note strong { font-weight: 700; }
+    .screens {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+    .screen-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+      border: 2px solid transparent;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .screen-card.is-featured {
+      border-color: var(--blue);
+      transform: translateY(-2px);
+    }
+    .screen-card .open-detail {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      cursor: zoom-in;
+    }
+    .screen-card .open-detail kanana-prototype {
+      pointer-events: none;
+      --device-scale: 0.6;
+    }
+    .screen-card:hover { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08); }
+    .screen-card h2 {
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .featured-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .screen-card.is-featured .featured-badge { opacity: 1; }
+    .pick-btn {
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fg);
+      background: #f5f5f5;
+      border: 1px solid #e5e5e5;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .pick-btn:hover { background: #eef0f2; }
+    .screen-card.is-featured .pick-btn {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+      cursor: default;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      color: #0285ff;
+      background: #eaf3ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+  <script type="module">
+    import { getFeatured, setFeatured, STORAGE_KEY } from './kanana.js';
+
+    const SCREENS = [
+      { key: 'ai-search', label: 'AI Search' },
+      { key: 'ask', label: 'Ask' },
+      { key: 'results', label: 'Results' },
+      { key: 'chatroom', label: 'Chatroom' },
+    ];
+
+    function render() {
+      const featured = getFeatured();
+      document.getElementById('featured-key').textContent = featured;
+      const grid = document.getElementById('screens');
+      grid.innerHTML = SCREENS.map(s => `
+        <div class="screen-card ${s.key === featured ? 'is-featured' : ''}" data-key="${s.key}">
+          <span class="featured-badge">FEATURED</span>
+          <a class="open-detail" href="./screen.html?key=${s.key}" title="크게 보기">
+            <kanana-prototype screen="${s.key}"></kanana-prototype>
+            <h2>${s.label}</h2>
+          </a>
+          <button class="pick-btn" data-pick="${s.key}">
+            ${s.key === featured ? '✓ 메인에 노출 중' : '메인에 노출'}
+          </button>
+        </div>
+      `).join('');
+
+      grid.querySelectorAll('.pick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setFeatured(btn.dataset.pick);
+          render();
+        });
+      });
+    }
+
+    window.addEventListener('storage', (e) => { if (e.key === STORAGE_KEY) render(); });
+    render();
+  </script>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Kanana Search</h1>
+    <p>한 프로젝트 안의 화면들. <code>&lt;kanana-prototype screen="..."&gt;</code>로 골라 쓰거나, "메인에 노출"을 눌러 기본 화면을 정합니다.</p>
+  </header>
+
+  <div class="featured-note">
+    <span>🔗 메인 페이지에서 <code>&lt;kanana-prototype&gt;</code>(속성 없이)는 현재 <strong><span id="featured-key">…</span></strong> 화면을 사용합니다.</span>
+  </div>
+
+  <section class="screens" id="screens"></section>
+</body>
+</html>
