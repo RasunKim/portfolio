@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오픈채팅 커버 및 만들기 개편 — Laseon Kim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    :root {
+      --kp-bg: #ffffff;
+      --kp-fg: #191919;
+      --kp-muted: #767676;
+      --kp-soft: #f5f5f5;
+      --kp-page-w: 1200px;
+      --kp-pad-x: 32px;
+    }
+    body {
+      background: var(--kp-bg);
+      color: var(--kp-fg);
+      font-family: "Pretendard Variable", "Pretendard", "Inter", "Noto Sans KR", sans-serif;
+      letter-spacing: -0.01em;
+    }
+    /* Reset default figure margins (UA stylesheet) */
+    figure { margin: 0; }
+
+    .kp-wrap {
+      max-width: var(--kp-page-w);
+      margin: 0 auto;
+      padding: 0 var(--kp-pad-x);
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .kp-close {
+      position: fixed;
+      top: 24px;
+      right: max(32px, calc((100vw - var(--kp-page-w)) / 2 + 32px));
+      display: block;
+      width: 48px;
+      height: 48px;
+      z-index: 100;
+      transition: opacity 0.2s ease;
+    }
+    .kp-close:hover { opacity: 0.8; }
+    .kp-close img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Project meta row */
+    .kp-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      padding-top: 120px;
+      font-size: 16px;
+      line-height: 1.45;
+      color: var(--kp-fg);
+    }
+    .kp-meta .kp-meta-left .kp-meta-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin: 0;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-left .kp-meta-sub {
+      margin: 8px 0 0;
+      color: var(--kp-muted);
+      font-weight: 500;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-right {
+      text-align: right;
+      color: var(--kp-muted);
+      font-weight: 500;
+    }
+    .kp-meta .kp-meta-right .kp-meta-role {
+      color: var(--kp-fg);
+      font-weight: 600;
+      margin: 0 0 8px;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-right p:not(.kp-meta-role) {
+      margin: 0;
+      line-height: 1;
+    }
+
+    /* Hero plate */
+    .kp-hero {
+      margin-top: 24px;
+      background: var(--kp-soft);
+      border-radius: 24px;
+      padding: 40px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .kp-hero img {
+      display: block;
+      width: 100%;
+      max-width: 195px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    .kp-hero:hover img { transform: scale(1.03); }
+
+    /* Narrative */
+    .kp-narrative {
+      margin-top: 24px;
+    }
+    .kp-narrative h2 {
+      font-size: 16px;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      margin: 0 0 2px;
+      max-width: 800px;
+    }
+    .kp-narrative p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--kp-fg);
+      margin: 0;
+      max-width: 1020px;
+    }
+
+    /* Generic section spacing */
+    .kp-section {
+      margin-top: 80px;
+    }
+    /* Box → Box (no text caption between): tighter 32px gap */
+    .kp-section + .kp-section { margin-top: 32px; }
+    /* Text → Text (caption directly follows another text block): 80 + 40 = 120px */
+    .kp-narrative + .kp-caption-block,
+    .kp-caption-block + .kp-caption-block { margin-top: 120px; }
+
+    /* Caption block (title↔body 8px) */
+    .kp-caption-block {
+      margin-top: 80px;
+    }
+    .kp-caption-block .kp-caption-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--kp-fg);
+      margin: 0 0 2px;
+    }
+    .kp-caption-block p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--kp-fg);
+      margin: 0;
+      max-width: 1290px;
+    }
+    /* When a kp-section directly follows a caption block, use 24px (text→box) */
+    .kp-caption-block + .kp-section-after-caption {
+      margin-top: 24px;
+    }
+
+    /* Generic plate placeholder — gray rounded box */
+    .kp-plate {
+      margin: 0;
+      background: var(--kp-soft);
+      border-radius: 24px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .kp-plate img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* ASIS / TOBE row — proportional 441 : 749 within the wrap, gap 10px.
+       Outer corners rounded (R 24), inner corners flat → reads as one split bar. */
+    .kp-asbe-row {
+      display: grid;
+      grid-template-columns: minmax(0, 441fr) minmax(0, 749fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+    .kp-asbe-plate {
+      background: var(--kp-soft);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .kp-asbe-plate-left  { border-radius: 24px 0 0 24px; }
+    .kp-asbe-plate-right { border-radius: 0 24px 24px 0; }
+    .kp-asbe-label {
+      margin: 0 0 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--kp-fg);
+      opacity: 0.5;
+      text-align: center;
+    }
+    .kp-asbe-plate img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    .kp-asbe-plate img:hover { transform: scale(1.03); }
+    .kp-asbe-plate-left img  { max-width: 170px; }
+    .kp-asbe-plate-right img { max-width: 370px; }
+    /* TOBE plate may host either one wide image OR a pair of phones */
+    .kp-asbe-twin {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 24px;
+      width: 100%;
+    }
+    .kp-asbe-twin img { max-width: 180px; }
+
+    /* Section plates — height shrinks to content */
+    .kp-section-tobe-cover .kp-plate { padding: 30px 40px; }
+    .kp-section-composite .kp-plate {
+      padding: 30px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .kp-section-composite .kp-plate img {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    .kp-section-composite .kp-plate img:hover { transform: scale(1.03); }
+    .kp-section-composite .kp-plate .kp-comp-phone { max-width: 195px; }
+    .kp-section-composite .kp-plate .kp-comp-landscape { max-width: 415px; }
+    .kp-section-one-to-one .kp-plate {
+      padding: 30px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 40px;
+      flex-wrap: nowrap;
+    }
+    .kp-section-one-to-one .kp-plate img {
+      display: block;
+      width: 100%;
+      max-width: 195px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    .kp-section-one-to-one .kp-plate img:hover { transform: scale(1.03); }
+
+    /* 3-phone row inside a plate */
+    .kp-tri-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 24px;
+      flex-wrap: nowrap;
+    }
+    .kp-tri-row img {
+      display: block;
+      width: 100%;
+      max-width: 195px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    .kp-tri-row img:hover { transform: scale(1.03); }
+
+    /* Footer */
+    .kp-footer {
+      margin-top: 96px;
+      padding: 32px 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--kp-muted);
+    }
+    .kp-footer a {
+      color: var(--kp-muted);
+      text-decoration: none;
+    }
+    .kp-footer a:hover { color: var(--kp-fg); }
+
+    @media (max-width: 900px) {
+      :root { --kp-pad-x: 20px; }
+      .kp-meta { padding-top: 32px; font-size: 12px; }
+      .kp-hero { min-height: 0; padding: 32px 0; }
+      .kp-section { margin-top: 56px; }
+      .kp-asbe-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="kp-wrap">
+    <a href="../../" class="kp-close" aria-label="Close">
+      <img src="../../assets/detailclose.svg" alt="" />
+    </a>
+
+    <!-- Top meta row -->
+    <div class="kp-meta">
+      <div class="kp-meta-left">
+        <p class="kp-meta-title">오픈채팅 커버 및 만들기 개편</p>
+        <p class="kp-meta-sub">Mobile Design, Kakao Service Design</p>
+      </div>
+      <div class="kp-meta-right">
+        <p class="kp-meta-role">UX UI Graphic Design</p>
+        <p>July - Oct 2024</p>
+      </div>
+    </div>
+
+    <!-- Hero plate -->
+    <section class="kp-hero">
+      <img src="../../assets/openchat/hero.svg" alt="판교 러닝크루 함께 뛰어요 오픈채팅" />
+    </section>
+
+    <!-- Narrative -->
+    <section class="kp-narrative">
+      <p>오픈채팅 탭 오픈 이후 커버 진입은 크게 증가했지만, 채팅방 참여율은 저조했습니다. 채팅방에 대한 중요 정보에 대해 가독성이 낮아 인지 어려움을 중점으로 두고, 오픈채팅 커버와 오픈채팅 만들기 디자인 개편을 진행했습니다.</p>
+    </section>
+
+    <!-- Caption: 오픈채팅 커버 -->
+    <section class="kp-caption-block">
+      <p class="kp-caption-label">오픈채팅 커버</p>
+      <p>개편에 있어, 주제 기능이 추가되었습니다. 추후 주제에 따른 오픈채팅 확장성을 고려해, 정보 중에서도 주제를 가장 높은 하이라키로 잡고, 그 외의 정보들을 하위 하이라키로 배치했습니다. 또한 바텀시트를 통해 향후 소개 뿐만이 아닌, 커뮤니티 정보가 많아져도 이를 포용할 수 있도록 고려했습니다.</p>
+    </section>
+
+    <!-- ASIS / TOBE row — Cover -->
+    <section class="kp-section kp-section-after-caption">
+      <div class="kp-asbe-row">
+        <figure class="kp-asbe-plate kp-asbe-plate-left">
+          <p class="kp-asbe-label">ASIS</p>
+          <img src="../../assets/openchat/cover-asis.svg" alt="ASIS — 그룹채팅 커버 기존" />
+        </figure>
+        <figure class="kp-asbe-plate kp-asbe-plate-right">
+          <p class="kp-asbe-label">TOBE</p>
+          <img src="../../assets/openchat/cover-tobe.svg" alt="TOBE — 그룹채팅 커버 개편" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- Refined Cover — 3 phones on a plate -->
+    <section class="kp-section kp-section-tobe-cover">
+      <figure class="kp-plate">
+        <div class="kp-tri-row">
+          <img src="../../assets/openchat/openchat03.svg" alt="" />
+          <img src="../../assets/openchat/openchat04.svg" alt="" />
+          <img src="../../assets/openchat/openchat05.svg" alt="" />
+        </div>
+      </figure>
+    </section>
+
+    <!-- Featured landscape composite — phone + bottom-sheet landscape side by side -->
+    <section class="kp-section kp-section-composite">
+      <figure class="kp-plate">
+        <img class="kp-comp-phone" src="../../assets/openchat/openchat06.svg" alt="" />
+        <img class="kp-comp-landscape" src="../../assets/openchat/openchat07.svg" alt="" />
+      </figure>
+    </section>
+
+    <!-- Caption: 그룹채팅 만들기 -->
+    <section class="kp-caption-block">
+      <p class="kp-caption-label">그룹채팅 만들기</p>
+      <p>만들기의 경우, 큰 변화보다는 서비스가 만들어져가면서 추가되었던 UI 타입을 정돈 한다는 점을 중점으로 두었습니다. 특히 기존에 오픈프로필로 참여하고 싶다는 CS에 대한 문제가 프로필 설정의 그룹화와 하이라키가 잘못되었다고 생각되어, 기본 프로필 설정 토글 버튼을 최상위 하이라키로 바꾸었습니다.</p>
+    </section>
+
+    <!-- ASIS / TOBE row — Create -->
+    <section class="kp-section kp-section-after-caption">
+      <div class="kp-asbe-row">
+        <figure class="kp-asbe-plate kp-asbe-plate-left">
+          <p class="kp-asbe-label">ASIS</p>
+          <img src="../../assets/openchat/openchat08.svg" alt="ASIS — 그룹채팅방 만들기 기존" />
+        </figure>
+        <figure class="kp-asbe-plate kp-asbe-plate-right">
+          <p class="kp-asbe-label">TOBE</p>
+          <div class="kp-asbe-twin">
+            <img src="../../assets/openchat/openchat09.svg" alt="TOBE — 그룹채팅방 만들기 개편 1" />
+            <img src="../../assets/openchat/openchat10.svg" alt="TOBE — 그룹채팅방 만들기 개편 2" />
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Caption: 1:1 오픈채팅 방 -->
+    <section class="kp-caption-block">
+      <p class="kp-caption-label">1:1 오픈채팅 방</p>
+    </section>
+
+    <!-- 1:1 section -->
+    <section class="kp-section kp-section-after-caption kp-section-one-to-one">
+      <figure class="kp-plate">
+        <img src="../../assets/openchat/openchat11.svg" alt="1:1 채팅방 만들기 설정" />
+        <img src="../../assets/openchat/openchat12.png" alt="1:1 채팅방 커버" />
+        <img src="../../assets/openchat/openchat13.svg" alt="1:1 채팅방 채팅 리스트" />
+      </figure>
+    </section>
+
+    <!-- Footer -->
+    <footer class="kp-footer">
+      <p>© 2026 Laseon Kim</p>
+      <a href="mailto:hello@laseon.kim">email</a>
+    </footer>
+  </main>
+</body>
+</html>
