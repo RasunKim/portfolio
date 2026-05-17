@@ -8,13 +8,16 @@
 //   <kanana-prototype></kanana-prototype>
 //
 // The featured key is stored in localStorage under "kanana:featured" so picking
-// a screen in /prototypes/kanana/ propagates to anywhere else that uses the
+// a screen in ${KANANA_BASE} propagates to anywhere else that uses the
 // attribute-less tag (e.g. the main portfolio page).
 //
 // Add a new screen by appending a key to the SCREENS map below.
 
 export const STORAGE_KEY = 'kanana:featured';
 export const DEFAULT_SCREEN = 'ai-search';
+
+const ASSET_BASE = new URL('../shared/', import.meta.url).href;
+const KANANA_BASE = new URL('./', import.meta.url).href;
 
 const SCREENS = {
   'ai-search': /* html */ `
@@ -76,7 +79,7 @@ const SCREENS = {
 
   chatroom: /* html */ `
     <div class="cr-topbar">
-      <img src="/prototypes/kanana/gnb-chatroom.svg" alt="Chatroom" />
+      <img src="${KANANA_BASE}gnb-chatroom.svg" alt="Chatroom" />
     </div>
     <div class="cr-dim"></div>
     <span class="cr-handle"></span>
@@ -97,19 +100,19 @@ const SCREENS = {
         <p class="cr-w-loc">백현동<span class="cr-w-loc-dim"></span></p>
         <div class="cr-w-temp-wrap">
           <div class="cr-w-temp-dim"></div>
-          <img class="cr-w-icon" src="/prototypes/shared/weather/day_01.png" alt="맑음" />
+          <img class="cr-w-icon" src="${ASSET_BASE}weather/day_01.png" alt="맑음" />
           <span class="cr-w-temp">11<span class="cr-w-deg">°</span></span>
         </div>
         <p class="cr-w-cond">구름많음</p>
         <p class="cr-w-range">최고 17°&nbsp;&nbsp;최저 10°</p>
 
         <ul class="cr-w-hours">
-          <li><span class="cr-w-time">지금</span><img class="cr-w-em" src="/prototypes/shared/weather/day_02.png" alt="" /><span class="cr-w-th">11°</span></li>
-          <li><span class="cr-w-time">16시</span><img class="cr-w-em" src="/prototypes/shared/weather/snow_02.png" alt="" /><span class="cr-w-th">10°</span></li>
-          <li><span class="cr-w-time">17시</span><img class="cr-w-em" src="/prototypes/shared/weather/day_03.png" alt="" /><span class="cr-w-th">10°</span></li>
-          <li><span class="cr-w-time">18시</span><img class="cr-w-em" src="/prototypes/shared/weather/lightning.png" alt="" /><span class="cr-w-th">10°</span></li>
-          <li><span class="cr-w-time">19시</span><img class="cr-w-em" src="/prototypes/shared/weather/night_08.png" alt="" /><span class="cr-w-th">10°</span></li>
-          <li><span class="cr-w-time">20시</span><img class="cr-w-em" src="/prototypes/shared/weather/rainy_03.png" alt="" /><span class="cr-w-th">10°</span></li>
+          <li><span class="cr-w-time">지금</span><img class="cr-w-em" src="${ASSET_BASE}weather/day_02.png" alt="" /><span class="cr-w-th">11°</span></li>
+          <li><span class="cr-w-time">16시</span><img class="cr-w-em" src="${ASSET_BASE}weather/snow_02.png" alt="" /><span class="cr-w-th">10°</span></li>
+          <li><span class="cr-w-time">17시</span><img class="cr-w-em" src="${ASSET_BASE}weather/day_03.png" alt="" /><span class="cr-w-th">10°</span></li>
+          <li><span class="cr-w-time">18시</span><img class="cr-w-em" src="${ASSET_BASE}weather/lightning.png" alt="" /><span class="cr-w-th">10°</span></li>
+          <li><span class="cr-w-time">19시</span><img class="cr-w-em" src="${ASSET_BASE}weather/night_08.png" alt="" /><span class="cr-w-th">10°</span></li>
+          <li><span class="cr-w-time">20시</span><img class="cr-w-em" src="${ASSET_BASE}weather/rainy_03.png" alt="" /><span class="cr-w-th">10°</span></li>
         </ul>
 
         <ul class="cr-w-details">
@@ -122,7 +125,7 @@ const SCREENS = {
       </div>
 
       <div class="cr-source">
-        <img class="cr-source-favicon" src="/prototypes/shared/favicons/케이웨더.png" alt="" />
+        <img class="cr-source-favicon" src="${ASSET_BASE}favicons/케이웨더.png" alt="" />
         <span class="cr-source-name">케이웨더</span>
         <span class="cr-source-meta">2025.10.16 9:30 기준 · 경기도 성남시 분당구 백현동</span>
       </div>
@@ -146,13 +149,13 @@ const SCREENS = {
       </div>
 
       <div class="cr-feedback">
-        <span class="cr-fb-btn"><img src="/prototypes/shared/feedback-up.svg" alt="좋아요" /></span>
-        <span class="cr-fb-btn"><img src="/prototypes/shared/feedback-down.svg" alt="별로예요" /></span>
+        <span class="cr-fb-btn"><img src="${ASSET_BASE}feedback-up.svg" alt="좋아요" /></span>
+        <span class="cr-fb-btn"><img src="${ASSET_BASE}feedback-down.svg" alt="별로예요" /></span>
         <span class="cr-source-pill">
           <span class="cr-stack">
-            <img class="cr-stack-dot" src="/prototypes/shared/favicons/네이버.png" alt="" />
-            <img class="cr-stack-dot" src="/prototypes/shared/favicons/Daum.png" alt="" />
-            <img class="cr-stack-dot" src="/prototypes/shared/favicons/다음.png" alt="" />
+            <img class="cr-stack-dot" src="${ASSET_BASE}favicons/네이버.png" alt="" />
+            <img class="cr-stack-dot" src="${ASSET_BASE}favicons/Daum.png" alt="" />
+            <img class="cr-stack-dot" src="${ASSET_BASE}favicons/다음.png" alt="" />
           </span>
           출처
         </span>
@@ -180,10 +183,10 @@ const SCREENS = {
 
     <div class="cr-bottom-bar">
       <div class="cr-search">
-        <img class="cr-search-icon" src="/prototypes/kanana/logo.svg" alt="Kanana" />
+        <img class="cr-search-icon" src="${KANANA_BASE}logo.svg" alt="Kanana" />
         <span class="cr-search-placeholder">오늘 날씨 알려줘</span>
       </div>
-      <span class="cr-share"><img src="/prototypes/shared/share.svg" alt="공유" /></span>
+      <span class="cr-share"><img src="${ASSET_BASE}share.svg" alt="공유" /></span>
     </div>
   `,
 };
@@ -847,7 +850,7 @@ class KananaPrototype extends HTMLElement {
         <div class="notch"></div>
         <div class="screen" data-screen="${screen}">
           <div class="status-bar ${darkBg ? 'light' : ''}">
-            <img src="/prototypes/shared/status-bar.svg" alt="" />
+            <img src="${ASSET_BASE}status-bar.svg" alt="" />
           </div>
           ${body}
         </div>
