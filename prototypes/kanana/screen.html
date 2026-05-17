@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanana Screen Detail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --fg: #191919;
+      --muted: #8f8f8f;
+      --line: #e5e5e5;
+      --blue: #0285ff;
+      --blue-soft: #eaf3ff;
+      --panel-bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Inter", "Noto Sans KR", -apple-system, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .back-link {
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-link:hover { color: var(--blue); }
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .breadcrumb strong { color: var(--fg); font-weight: 600; }
+
+    .screen-tabs {
+      display: flex;
+      gap: 4px;
+    }
+    .screen-tabs button {
+      font: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .screen-tabs button:hover { background: #f0f0f0; color: var(--fg); }
+    .screen-tabs button[aria-current="page"] {
+      background: var(--fg);
+      color: #fff;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      min-height: calc(100vh - 73px);
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .side-panel { border-left: 0; border-top: 1px solid var(--line); }
+    }
+
+    .stage {
+      display: grid;
+      place-items: center;
+      padding: 64px 32px;
+      background: var(--bg);
+      overflow: auto;
+    }
+    .stage-inner kanana-prototype { --device-scale: var(--scale, 1); }
+
+    .side-panel {
+      background: var(--panel-bg);
+      border-left: 1px solid var(--line);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .side-section h3 {
+      margin: 0 0 12px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    .meta-row + .meta-row { border-top: 1px dashed var(--line); }
+    .meta-row .key { color: var(--muted); }
+    .meta-row .val { font-weight: 500; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .scale-control { display: flex; align-items: center; gap: 10px; }
+    .scale-control input { flex: 1; }
+    .scale-control .value {
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      color: var(--muted);
+      width: 36px;
+      text-align: right;
+    }
+
+    .pick-btn {
+      font: inherit;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--blue);
+      border: 1px solid var(--blue);
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+    }
+    .pick-btn:hover { filter: brightness(0.94); }
+    .pick-btn.is-featured {
+      background: #fff;
+      color: var(--blue);
+      cursor: default;
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-row button {
+      font: inherit;
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      background: #f5f5f5;
+      border: 1px solid var(--line);
+      color: var(--fg);
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .nav-row button:hover { background: #eef0f2; }
+    .nav-row button:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+  <script type="module">
+    import { getFeatured, setFeatured, STORAGE_KEY } from './kanana.js';
+
+    const SCREENS = [
+      { key: 'ai-search', label: 'AI Search' },
+      { key: 'ask',       label: 'Ask' },
+      { key: 'results',   label: 'Results' },
+      { key: 'chatroom',  label: 'Chatroom' },
+    ];
+
+    function getKey() {
+      const k = new URLSearchParams(location.search).get('key');
+      return SCREENS.find(s => s.key === k) ? k : SCREENS[0].key;
+    }
+    function setKey(key) {
+      const url = new URL(location.href);
+      url.searchParams.set('key', key);
+      history.replaceState({}, '', url);
+      render();
+    }
+
+    function render() {
+      const key = getKey();
+      const featured = getFeatured();
+      const meta = SCREENS.find(s => s.key === key);
+      const idx = SCREENS.findIndex(s => s.key === key);
+
+      document.getElementById('crumb-current').textContent = meta.label;
+      document.title = `Kanana — ${meta.label}`;
+      document.getElementById('stage').innerHTML =
+        `<div class="stage-inner"><kanana-prototype screen="${key}"></kanana-prototype></div>`;
+
+      const tabs = document.getElementById('tabs');
+      tabs.innerHTML = SCREENS.map(s =>
+        `<button data-jump="${s.key}" ${s.key === key ? 'aria-current="page"' : ''}>${s.label}</button>`
+      ).join('');
+      tabs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setKey(b.dataset.jump)));
+
+      const isFeatured = key === featured;
+      const btn = document.getElementById('feature-btn');
+      btn.textContent = isFeatured ? '✓ 메인에 노출 중' : '메인에 노출';
+      btn.classList.toggle('is-featured', isFeatured);
+      btn.disabled = isFeatured;
+      btn.onclick = () => { setFeatured(key); render(); };
+
+      document.getElementById('meta-key').innerHTML = `<code>${key}</code>`;
+      document.getElementById('meta-label').textContent = meta.label;
+      document.getElementById('meta-file').innerHTML = `<code>prototypes/kanana/kanana.js</code>`;
+      document.getElementById('meta-token').innerHTML = `<code>SCREENS["${key}"]</code>`;
+
+      const prev = SCREENS[idx - 1];
+      const next = SCREENS[idx + 1];
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      prevBtn.disabled = !prev;
+      nextBtn.disabled = !next;
+      prevBtn.textContent = prev ? `← ${prev.label}` : '← 이전';
+      nextBtn.textContent = next ? `${next.label} →` : '다음 →';
+      prevBtn.onclick = () => prev && setKey(prev.key);
+      nextBtn.onclick = () => next && setKey(next.key);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const slider = document.getElementById('scale');
+      const out = document.getElementById('scale-val');
+      const sync = () => {
+        const v = Number(slider.value);
+        document.documentElement.style.setProperty('--scale', String(v));
+        out.textContent = `${v.toFixed(1)}x`;
+      };
+      slider.addEventListener('input', sync);
+      // Defaults adjusted for the native 405x864 phone size.
+      slider.min = '0.4';
+      slider.max = '1.4';
+      slider.step = '0.05';
+      slider.value = '0.85';
+      sync();
+      render();
+    });
+    window.addEventListener('storage', (e) => { if (e.key === STORAGE_KEY) render(); });
+    window.addEventListener('kanana:featured-change', render);
+  </script>
+  <script type="module" src="./kanana.js"></script>
+</head>
+<body>
+  <header class="top-bar">
+    <div style="display: flex; align-items: center; gap: 18px;">
+      <a class="back-link" href="./">← 모든 화면</a>
+      <span class="breadcrumb">Kanana Search · <strong id="crumb-current">…</strong></span>
+    </div>
+    <div class="screen-tabs" id="tabs"></div>
+  </header>
+
+  <div class="layout">
+    <div class="stage" id="stage"></div>
+
+    <aside class="side-panel">
+      <section class="side-section">
+        <h3>화면 정보</h3>
+        <div class="meta-row"><span class="key">키</span><span class="val" id="meta-key"></span></div>
+        <div class="meta-row"><span class="key">라벨</span><span class="val" id="meta-label"></span></div>
+        <div class="meta-row"><span class="key">파일</span><span class="val" id="meta-file"></span></div>
+        <div class="meta-row"><span class="key">템플릿</span><span class="val" id="meta-token"></span></div>
+      </section>
+
+      <section class="side-section">
+        <h3>표시 크기</h3>
+        <div class="scale-control">
+          <input id="scale" type="range" min="0.8" max="2.4" step="0.1" value="1.6" />
+          <span class="value" id="scale-val">1.6x</span>
+        </div>
+      </section>
+
+      <section class="side-section">
+        <h3>메인에서 사용</h3>
+        <button class="pick-btn" id="feature-btn">…</button>
+      </section>
+
+      <section class="side-section">
+        <h3>이동</h3>
+        <div class="nav-row">
+          <button id="prev-btn">← 이전</button>
+          <button id="next-btn">다음 →</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+</body>
+</html>
