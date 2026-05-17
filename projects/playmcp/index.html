@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Play MCP — Laseon Kim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    :root {
+      --kp-bg: #ffffff;
+      --kp-fg: #191919;
+      --kp-muted: #767676;
+      --kp-soft: #f5f5f5;
+      --kp-page-w: 1200px;
+      --kp-pad-x: 32px;
+    }
+    body {
+      background: var(--kp-bg);
+      color: var(--kp-fg);
+      font-family: "Pretendard Variable", "Pretendard", "Inter", "Noto Sans KR", sans-serif;
+      letter-spacing: -0.01em;
+    }
+    /* Reset default figure margins (UA stylesheet) */
+    figure { margin: 0; }
+
+    .kp-wrap {
+      max-width: var(--kp-page-w);
+      margin: 0 auto;
+      padding: 0 var(--kp-pad-x);
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .kp-close {
+      position: fixed;
+      top: 24px;
+      right: max(32px, calc((100vw - var(--kp-page-w)) / 2 + 32px));
+      display: block;
+      width: 48px;
+      height: 48px;
+      z-index: 100;
+      transition: opacity 0.2s ease;
+    }
+    .kp-close:hover { opacity: 0.8; }
+    .kp-close img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Project meta row (sits just below the global site-header) */
+    .kp-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      padding-top: 120px;
+      font-size: 16px;
+      line-height: 1.45;
+      color: var(--kp-fg);
+    }
+    .kp-meta .kp-meta-left .kp-meta-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin: 0;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-left .kp-meta-sub {
+      margin: 8px 0 0;
+      color: var(--kp-muted);
+      font-weight: 500;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-right {
+      text-align: right;
+      color: var(--kp-muted);
+      font-weight: 500;
+    }
+    .kp-meta .kp-meta-right .kp-meta-role {
+      color: var(--kp-fg);
+      font-weight: 600;
+      margin: 0 0 8px;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-right p:not(.kp-meta-role) {
+      margin: 0;
+      line-height: 1;
+    }
+
+    /* Hero — laptop on light gray plate */
+    .kp-hero {
+      margin-top: 24px;
+      background: var(--kp-soft);
+      border-radius: 24px;
+      padding: 60px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .kp-hero img,
+    .kp-hero video {
+      display: block;
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    /* Crop a couple of pixels off each edge to hide the .mov file's
+       seam/border artifacts that show up against the gray plate. */
+    .kp-hero video {
+      clip-path: inset(2px);
+    }
+    .kp-hero:hover img,
+    .kp-hero:hover video { transform: scale(1.02); }
+
+    /* Narrative — heading + body paragraph */
+    .kp-narrative {
+      margin-top: 24px;
+    }
+    .kp-narrative h2 {
+      font-size: 16px;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      margin: 0 0 2px;
+      max-width: 800px;
+    }
+    .kp-narrative p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--kp-fg);
+      margin: 0;
+      max-width: 1020px;
+    }
+    .kp-narrative-link {
+      display: inline-block;
+      margin-top: 24px;
+      border-radius: 999px;
+      transition: background-color 0.2s ease;
+    }
+    .kp-narrative-link:hover { background-color: rgba(0, 0, 0, 0.06); }
+    .kp-narrative-link img {
+      display: block;
+      width: 109px;
+      height: auto;
+    }
+
+    /* Generic section spacing */
+    .kp-section {
+      margin-top: 80px;
+    }
+    .kp-section-label-top {
+      margin: 0 0 24px;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--kp-fg);
+    }
+
+    /* Caption block — title 8px above body text */
+    .kp-caption-block {
+      margin-top: 80px;
+    }
+    .kp-caption-block .kp-caption-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--kp-fg);
+      margin: 0 0 2px;
+    }
+    .kp-caption-block p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--kp-fg);
+      margin: 0;
+      max-width: 1290px;
+    }
+
+    /* Plate variants for screenshot rows */
+    .kp-figure {
+      margin: 0;
+      background: var(--kp-soft);
+      border-radius: 24px;
+      padding: 0;
+      overflow: hidden;
+    }
+    .kp-figure.kp-figure-dark { background: #0f0f0f; }
+    .kp-figure.kp-figure-blue { background: #0a4cff; }
+    .kp-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Screen tour — ONE unified green plate holds the screenshots + captions */
+    .kp-screens-plate {
+      margin: 0;
+      background: #c8e6c5;
+      border-radius: 24px;
+      padding: 40px 80px;
+      overflow: hidden;
+    }
+    .kp-screens-plate + .kp-screens-plate { margin-top: 24px; }
+    /* Color variants */
+    .kp-screens-plate.is-mid { background: #8ECBAC; }
+    .kp-screens-plate.is-blue { background: #5DB7F5; }
+    .kp-screens-plate.is-blue-deep { background: #3241B9; }
+    /* Captions on deep-blue plates need light text */
+    .kp-screens-plate.is-blue-deep .kp-screens-title { color: #fff; }
+    .kp-screens-plate.is-blue-deep .kp-screens-sub { color: rgba(255, 255, 255, 0.7); }
+
+    /* Chats row — PC + mobiles, or 4 mobiles only */
+    .kp-chats-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: nowrap;
+    }
+    .kp-chat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 0 1 auto;
+    }
+    .kp-chat-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    .kp-chat-item img:hover { transform: scale(1.04); }
+    .kp-chat-pc img { max-width: 480px; }
+    .kp-chat-mobile img { max-width: 200px; }
+    .kp-chat-item .kp-screens-caption {
+      margin-top: 14px;
+    }
+    /* In the 4-mobiles row, distribute evenly */
+    .kp-chats-row.is-quad .kp-chat-mobile img { max-width: 220px; }
+    .kp-chats-row.is-quad {
+      align-items: flex-start;
+      gap: 24px;
+    }
+    /* Constrain plate height so chats with taller content clip at the bottom */
+    .kp-screens-plate.is-quad-plate {
+      height: 620px;
+      box-sizing: border-box;
+    }
+    .kp-screens-plate.is-quad-plate .kp-chats-row { height: 100%; }
+
+    /* Layered variant — PC bleeds off the LEFT edge of the plate, mobiles
+       fully visible (sit IN FRONT of the PC for the first one), and the
+       last mobile bleeds off the RIGHT edge. Both clips are handled by the
+       plate's overflow:hidden. */
+    .kp-screens-plate.is-layered { padding: 40px 0; }
+    .kp-chats-row.is-layered {
+      justify-content: flex-start;
+      padding: 0;
+      gap: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .kp-chats-row.is-layered > * { flex-shrink: 0; }
+    .kp-chats-row.is-layered .kp-chat-pc {
+      margin-left: -450px;
+      /* Push PC down by caption height + margin so PC image bottom
+         aligns with mobile image bottoms (captions hang below). */
+      margin-bottom: 44px;
+    }
+    .kp-chats-row.is-layered .kp-chat-pc img {
+      width: 720px;
+      max-width: none;
+    }
+    .kp-chats-row.is-layered .kp-chat-mobile img {
+      width: 230px;
+      max-width: none;
+    }
+    /* First mobile right after PC — clear gap from PC's right edge */
+    .kp-chats-row.is-layered .kp-chat-pc + .kp-chat-mobile {
+      margin-left: 80px;
+    }
+    /* Subsequent mobiles flow to the right with tight gaps */
+    .kp-chats-row.is-layered .kp-chat-mobile + .kp-chat-mobile {
+      margin-left: 24px;
+    }
+    .kp-screens-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .kp-screens-cell {
+      flex: 0 1 460px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .kp-screens-cell img {
+      display: block;
+      width: 100%;
+      max-width: 460px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+    /* Wide (single-column) plate gets a larger cap so the screen reads */
+    .kp-screens-plate > .kp-screens-cell img { max-width: 720px; }
+    .kp-screens-cell img:hover { transform: scale(1.03); }
+    .kp-screens-caption {
+      margin: 16px 0 0;
+      font-size: 13px;
+      text-align: center;
+    }
+    .kp-screens-caption .kp-screens-title {
+      font-weight: 600;
+      color: var(--kp-fg);
+    }
+    .kp-screens-caption .kp-screens-sub {
+      font-weight: 400;
+      color: var(--kp-muted);
+      margin-left: 6px;
+    }
+
+    /* Diagram block — SVG is content-only, plate is a separate black wrapper */
+    .kp-diagram {
+      margin: 0;
+      background: #000;
+      border-radius: 24px;
+      padding: 80px 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    /* When the green-plate section follows the caption directly, tighten the
+       top gap to the title→box 24px rule instead of the default 80px. */
+    .kp-caption-block + .kp-section-after-caption {
+      margin-top: 24px;
+    }
+    .kp-diagram img {
+      display: block;
+      width: 100%;
+      max-width: 660px;
+      height: auto;
+    }
+
+    /* Footer */
+    .kp-footer {
+      margin-top: 96px;
+      padding: 32px 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--kp-muted);
+    }
+    .kp-footer a {
+      color: var(--kp-muted);
+      text-decoration: none;
+    }
+    .kp-footer a:hover { color: var(--kp-fg); }
+
+    @media (max-width: 900px) {
+      :root { --kp-pad-x: 20px; }
+      .kp-meta { padding-top: 32px; font-size: 12px; }
+      .kp-hero { padding: 32px 0; }
+      .kp-section { margin-top: 56px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="kp-wrap">
+    <a href="../../" class="kp-close" aria-label="Close">
+      <img src="../../assets/detailclose.svg" alt="" />
+    </a>
+
+    <!-- Top meta row -->
+    <div class="kp-meta">
+      <div class="kp-meta-left">
+        <p class="kp-meta-title">Play MCP</p>
+        <p class="kp-meta-sub">WEB Design, Kakao AI Service Design</p>
+      </div>
+      <div class="kp-meta-right">
+        <p class="kp-meta-role">UX UI Graphic Design</p>
+        <p>April - June 2025</p>
+      </div>
+    </div>
+
+    <!-- Hero: laptop video on light plate -->
+    <section class="kp-hero">
+      <video autoplay loop muted playsinline preload="metadata" poster="../../assets/playmcp/hero.png">
+        <source src="../../assets/playmcp/hero.mov" type="video/mp4" />
+      </video>
+    </section>
+
+    <!-- Narrative -->
+    <section class="kp-narrative">
+      <h2>향후 카카오 AI 서비스에서 활용할 MCP 발굴을 위한 공간</h2>
+      <p>기능 중심과 플랫폼 목적이 뒤섞인 MCP 환경에서, 개발자가 가장 효율적으로 실험·등록·연동할 수 있는 구조는 무엇일까? 의 고민을 시작으로, 모든 정보를 단일 콘텐츠로 제공할 경우 구조적 복잡성과 정보별 품질 편차가 발생한다는 인사이트를 기반으로, 검색 결과를 보다 구조적이고 안정적으로 제공할 수 있는 방향을 도출했습니다.</p>
+      <a class="kp-narrative-link" href="https://playmcp.kakao.com/?page=0" target="_blank" rel="noopener noreferrer" aria-label="PlayMCP 바로가기">
+        <img src="../../assets/playmcp/mcp-link.svg" alt="PlayMCP 바로가기" />
+      </a>
+    </section>
+
+    <!-- Diagram (standalone black plate) -->
+    <section class="kp-section">
+      <figure class="kp-diagram">
+        <img src="../../assets/playmcp/diagram.svg" alt="MCP 탐색 → AI 채팅 → MCP 등록·수정 관리하기 → 카카오톡 Agent 연동 다이어그램" />
+      </figure>
+    </section>
+
+    <!-- Caption between diagram and screens — introduces the green plates below -->
+    <section class="kp-caption-block">
+      <p class="kp-caption-label">탐색 → 등록 → 체험 유기적인 동선으로 순환구조를 정의</p>
+      <p>Play MCP는 개발자가 MCP를 탐색하고 직접 등록·관리하며, 실제 챗 인터페이스에서 체험할 수 있는 구조입니다. 이 흐름은 반복적인 실험과 개선이 가능한 순환형 테스트 플로우로 설계되었습니다.</p>
+    </section>
+
+    <!-- Screen tour — discover / register / chat (single green plate each) -->
+    <section class="kp-section kp-section-after-caption">
+      <!-- Plate 1: two screens side by side under ONE plate -->
+      <figure class="kp-screens-plate">
+        <div class="kp-screens-row">
+          <div class="kp-screens-cell">
+            <img src="../../assets/playmcp/playmcp01.svg" alt="전체 MCP 탐색" />
+            <p class="kp-screens-caption">
+              <span class="kp-screens-title">전체 MCP 탐색</span><span class="kp-screens-sub">MCP 탐색으로써 마켓 역할</span>
+            </p>
+          </div>
+          <div class="kp-screens-cell">
+            <img src="../../assets/playmcp/playmcp02.svg" alt="전체 MCP 등록 / 관리" />
+            <p class="kp-screens-caption">
+              <span class="kp-screens-title">전체 MCP 등록 / 관리</span><span class="kp-screens-sub">MCP 등록할 수 있는 작업 공간</span>
+            </p>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Plate 2: single wide screen under its own plate -->
+      <figure class="kp-screens-plate is-mid">
+        <div class="kp-screens-cell">
+          <img src="../../assets/playmcp/playmcp03.svg" alt="AI 채팅" />
+          <p class="kp-screens-caption">
+            <span class="kp-screens-title">AI 채팅</span><span class="kp-screens-sub">AI 채팅방으로의 검증 환경</span>
+          </p>
+        </div>
+      </figure>
+    </section>
+
+    <!-- Caption: 쉬운 등록과 수정 -->
+    <section class="kp-caption-block">
+      <p class="kp-caption-label">쉬운 등록과 수정</p>
+      <p>필수값만 최소한으로 받아 빠른 시도 가능하게 설계하며 다수 MCP 를 보유한 유저도<br/>한 눈에 확인할 수 있도록 심사 진행 상태를 구분하여 카드 형식으로 MCP 상태 제공하게 했습니다.</p>
+    </section>
+
+    <!-- Two blue plates: developer console + my MCP status -->
+    <section class="kp-section kp-section-after-caption">
+      <figure class="kp-screens-plate is-blue">
+        <div class="kp-screens-cell">
+          <img src="../../assets/playmcp/playmcp04.svg" alt="개발자 콘솔에서 MCP 등록하기" />
+          <p class="kp-screens-caption">
+            <span class="kp-screens-title">개발자 콘솔에서 MCP 등록하기</span>
+          </p>
+        </div>
+      </figure>
+      <figure class="kp-screens-plate is-blue-deep">
+        <div class="kp-screens-cell">
+          <img src="../../assets/playmcp/playmcp05.svg" alt="내가 등록한 MCP 상태값 확인하기" />
+          <p class="kp-screens-caption">
+            <span class="kp-screens-title">내가 등록한 MCP 상태값 확인하기</span>
+          </p>
+        </div>
+      </figure>
+    </section>
+
+    <!-- Caption: 실제 환경과 비슷한 환경에서 테스트하기 -->
+    <section class="kp-caption-block">
+      <p class="kp-caption-label">실제 환경과 비슷한 환경에서 테스트하기</p>
+      <p>MCP 등록 과정에서 추가한 대화 스타터를 실행하고 툴 호출을 할 때<br/>결과 시각화 기능을 통해 직관적이고 빠른 MCP 테스트를 유도했습니다.</p>
+    </section>
+
+    <!-- Two deep-blue plates: PC + chats (plate 1) / 4 chats (plate 2) -->
+    <section class="kp-section kp-section-after-caption">
+      <!-- Plate 1: AI PC (bleeds off left) + 3 mobiles with captions
+           + chat-04 (no caption) clipped off right edge. -->
+      <figure class="kp-screens-plate is-blue-deep is-layered">
+        <div class="kp-chats-row is-layered">
+          <div class="kp-chat-item kp-chat-pc">
+            <img src="../../assets/playmcp/ai-pc.svg" alt="AI 채팅 PC 화면" />
+          </div>
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-01.svg" alt="" />
+            <p class="kp-screens-caption">
+              <span class="kp-screens-title">AI 채팅 질문하기</span>
+            </p>
+          </div>
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-02.svg" alt="" />
+            <p class="kp-screens-caption">
+              <span class="kp-screens-title">AI 프로그레스바</span>
+            </p>
+          </div>
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-03.svg" alt="" />
+            <p class="kp-screens-caption">
+              <span class="kp-screens-title">TOOL 호출</span>
+            </p>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Plate 2: 4 mobile chats in a row (top-aligned, plate clips taller chats at bottom) -->
+      <figure class="kp-screens-plate is-blue-deep is-quad-plate">
+        <div class="kp-chats-row is-quad">
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-04.svg" alt="" />
+          </div>
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-05.svg" alt="" />
+          </div>
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-06.svg" alt="" />
+          </div>
+          <div class="kp-chat-item kp-chat-mobile">
+            <img src="../../assets/playmcp/chat-07.svg" alt="" />
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <!-- Footer -->
+    <footer class="kp-footer">
+      <p>© 2026 Laseon Kim</p>
+      <a href="mailto:hello@laseon.kim">email</a>
+    </footer>
+  </main>
+</body>
+</html>

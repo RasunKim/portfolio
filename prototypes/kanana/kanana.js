@@ -227,7 +227,6 @@ const baseStyles = /* css */ `
     background: #0d0d0d;
     border-radius: 55px;
     padding: 6px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
     box-sizing: border-box;
   }
   .notch {

@@ -16,7 +16,7 @@
       --kp-fg: #191919;
       --kp-muted: #767676;
       --kp-soft: #f5f5f5;
-      --kp-page-w: 1376px;
+      --kp-page-w: 1200px;
       --kp-pad-x: 32px;
     }
     body {
@@ -25,12 +25,32 @@
       font-family: "Pretendard Variable", "Pretendard", "Inter", "Noto Sans KR", sans-serif;
       letter-spacing: -0.01em;
     }
+    /* Reset default figure margins (UA stylesheet) */
+    figure { margin: 0; }
 
     .kp-wrap {
       max-width: var(--kp-page-w);
       margin: 0 auto;
       padding: 0 var(--kp-pad-x);
       box-sizing: border-box;
+      position: relative;
+    }
+
+    .kp-close {
+      position: fixed;
+      top: 24px;
+      right: max(32px, calc((100vw - var(--kp-page-w)) / 2 + 32px));
+      display: block;
+      width: 48px;
+      height: 48px;
+      z-index: 100;
+      transition: opacity 0.2s ease;
+    }
+    .kp-close:hover { opacity: 0.8; }
+    .kp-close img {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
 
     /* Project meta row (sits just below the global site-header) */
@@ -39,20 +59,22 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 24px;
-      padding-top: 64px;
-      font-size: 13px;
+      padding-top: 120px;
+      font-size: 16px;
       line-height: 1.45;
       color: var(--kp-fg);
     }
     .kp-meta .kp-meta-left .kp-meta-title {
       font-weight: 600;
-      font-size: 13px;
+      font-size: 16px;
       margin: 0;
+      line-height: 1;
     }
     .kp-meta .kp-meta-left .kp-meta-sub {
-      margin: 6px 0 0;
+      margin: 8px 0 0;
       color: var(--kp-muted);
       font-weight: 500;
+      line-height: 1;
     }
     .kp-meta .kp-meta-right {
       text-align: right;
@@ -62,7 +84,12 @@
     .kp-meta .kp-meta-right .kp-meta-role {
       color: var(--kp-fg);
       font-weight: 600;
-      margin: 0 0 6px;
+      margin: 0 0 8px;
+      line-height: 1;
+    }
+    .kp-meta .kp-meta-right p:not(.kp-meta-role) {
+      margin: 0;
+      line-height: 1;
     }
 
     /* Hero — chatroom phone centered on light gray plate */
@@ -70,28 +97,44 @@
       margin-top: 24px;
       background: var(--kp-soft);
       border-radius: 24px;
-      padding: 60px 0 24px;
+      padding: 30px 0;
       display: flex;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
       min-height: 600px;
+      container-type: inline-size;
     }
-    .kp-hero kanana-prototype { --device-scale: 0.66; }
+    .kp-hero kanana-prototype { --device-scale: 0.66; cursor: grab; }
+    .kp-hero kanana-prototype:active { cursor: grabbing; }
+    /* Scale the prototype down so the device frame never gets cropped
+       by a narrowing viewport. */
+    @container (max-width: 540px) {
+      .kp-hero kanana-prototype { --device-scale: 0.55; }
+    }
+    @container (max-width: 440px) {
+      .kp-hero kanana-prototype { --device-scale: 0.45; }
+    }
+    @container (max-width: 360px) {
+      .kp-hero kanana-prototype { --device-scale: 0.38; }
+    }
+    @container (max-width: 300px) {
+      .kp-hero kanana-prototype { --device-scale: 0.32; }
+    }
 
     /* Section: heading + body paragraph */
     .kp-narrative {
-      margin-top: 48px;
+      margin-top: 24px;
     }
     .kp-narrative h2 {
-      font-size: 24px;
+      font-size: 18px;
       line-height: 1.4;
       letter-spacing: -0.02em;
       font-weight: 700;
-      margin: 0 0 16px;
+      margin: 0 0 8px;
       max-width: 800px;
     }
     .kp-narrative p {
-      font-size: 16px;
+      font-size: 18px;
       line-height: 1.75;
       color: var(--kp-fg);
       margin: 0;
@@ -120,28 +163,172 @@
     }
     .kp-section-label {
       margin-top: 12px;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 500;
       color: var(--kp-fg);
     }
+    .kp-section-label-top {
+      margin: 0 0 24px;
+    }
+    .kp-section-weather { margin-top: 80px; }
 
-    /* "Module Caes" / paragraph block between modules and weather */
+    /* Process diagram — labels on left, 3 phones on right */
+    .kp-process {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      padding: 58px 72px;
+    }
+    .kp-process-labels {
+      display: flex;
+      flex-direction: column;
+      gap: 34px;
+      flex-shrink: 0;
+    }
+    .kp-process-labels img {
+      display: block;
+      height: 43px;
+      width: auto;
+    }
+    .kp-process-phones {
+      display: flex;
+      gap: 17px;
+      align-items: center;
+    }
+    .kp-process-phones img {
+      display: block;
+      width: 192px;
+      height: auto;
+    }
+
+    /* Module Case — 3 phones with labels under each */
+    .kp-modulecase {
+      padding: 58px 72px;
+    }
+    .kp-modulecase-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+    }
+    .kp-modulecase-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .kp-modulecase-item img {
+      display: block;
+      width: 260px;
+      height: auto;
+      transition: transform 0.35s ease;
+    }
+    .kp-modulecase-item img:hover { transform: scale(1.04); }
+    .kp-modulecase-label {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--kp-fg);
+    }
+    .kp-section-label-top {
+      margin: 0 0 24px;
+    }
+    .kp-section-weather { margin-top: 80px; }
+
+    /* Weather — 4 phones on a gray plate */
+    .kp-weather {
+      padding: 58px 72px;
+    }
+    .kp-weather-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .kp-weather-row img {
+      display: block;
+      width: 220px;
+      height: auto;
+      transition: transform 0.35s ease;
+    }
+    .kp-weather-row img:hover { transform: scale(1.04); }
+
+    /* Stock — two plates side by side: gray plate (mobile) + wallpaper plate (PC) */
+    .kp-stock-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .kp-stock-plate {
+      margin: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      min-height: 420px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+      box-sizing: border-box;
+    }
+    .kp-stock-plate-gray { background: var(--kp-soft); }
+    .kp-stock-plate-bg {
+      background: url("../../assets/kanana/stock-pc-bg.png") center / cover no-repeat;
+    }
+    .kp-stock-plate img {
+      display: block;
+      height: auto;
+      transition: transform 0.35s ease;
+    }
+    .kp-stock-plate:hover img { transform: scale(1.04); }
+    .kp-stock-plate-gray img { width: 240px; }
+    .kp-stock-plate-bg img { width: 360px; }
+
+    /* Place — single gray plate with iPad + phone overlapping */
+    .kp-place {
+      background: var(--kp-soft);
+      border-radius: 24px;
+      padding: 30px 60px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .kp-place img {
+      display: block;
+      height: auto;
+      transition: transform 0.35s ease;
+    }
+    .kp-place img:hover { transform: scale(1.04); }
+    .kp-place .kp-place-mobile {
+      width: 198px;
+      margin-right: -44px;
+      position: relative;
+      z-index: 1;
+    }
+    .kp-place .kp-place-ipad {
+      width: 600px;
+    }
+
+    /* "Module Caes" / paragraph block — sits above the module case showcase */
     .kp-caption-block {
-      margin-top: 56px;
+      margin-top: 80px;
     }
     .kp-caption-block .kp-caption-label {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--kp-fg);
-      margin: 0 0 10px;
+      margin: 0 0 8px;
     }
     .kp-caption-block p {
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.75;
       color: var(--kp-fg);
       margin: 0;
       max-width: 1290px;
     }
+    .kp-section-modulecase { margin-top: 24px; }
 
     /* Footer below content */
     .kp-footer {
@@ -170,19 +357,10 @@
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <a href="../../" class="brand">Laseon Kim</a>
-    <nav class="primary-nav">
-      <a href="../../#work">WORK</a>
-      <a href="../../#resume">Resume</a>
-    </nav>
-    <div class="header-toggles">
-      <button class="toggle" aria-label="Language">Ko</button>
-      <button class="toggle" aria-label="Theme">Dark</button>
-    </div>
-  </header>
-
   <main class="kp-wrap">
+    <a href="../../" class="kp-close" aria-label="Close">
+      <img src="../../assets/detailclose.svg" alt="" />
+    </a>
     <!-- Top meta row -->
     <div class="kp-meta">
       <div class="kp-meta-left">
@@ -197,26 +375,170 @@
 
     <!-- Hero: phone (chatroom) on light plate -->
     <section class="kp-hero">
-      <kanana-prototype screen="chatroom"></kanana-prototype>
+      <kanana-prototype id="kp-hero-phone" screen="chatroom"></kanana-prototype>
     </section>
+
+    <script>
+      (function () {
+        const phone = document.getElementById('kp-hero-phone');
+        const hero = document.querySelector('.kp-hero');
+        if (!phone) return;
+
+        let isPaused = false;
+        let pausedAt = 0;
+
+        if (hero) {
+          hero.addEventListener('mouseenter', () => { isPaused = true; });
+          hero.addEventListener('mouseleave', () => { isPaused = false; });
+        }
+
+        function easeOutQuint(t) {
+          return 1 - Math.pow(1 - t, 5);
+        }
+
+        function animate(duration, onTick, easing = easeOutQuint) {
+          return new Promise((resolve) => {
+            let startTime = performance.now();
+            function tick(now) {
+              if (isPaused) {
+                if (!pausedAt) pausedAt = now;
+                requestAnimationFrame(tick);
+                return;
+              }
+              if (pausedAt) {
+                startTime += now - pausedAt;
+                pausedAt = 0;
+              }
+              const t = Math.min(1, (now - startTime) / duration);
+              onTick(easing(t), t);
+              if (t < 1) requestAnimationFrame(tick);
+              else resolve();
+            }
+            requestAnimationFrame(tick);
+          });
+        }
+
+        function wait(ms) {
+          return new Promise((resolve) => {
+            let startTime = performance.now();
+            function tick(now) {
+              if (isPaused) {
+                if (!pausedAt) pausedAt = now;
+                requestAnimationFrame(tick);
+                return;
+              }
+              if (pausedAt) {
+                startTime += now - pausedAt;
+                pausedAt = 0;
+              }
+              if (now - startTime >= ms) resolve();
+              else requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+          });
+        }
+
+        function injectCursor(root) {
+          const style = document.createElement('style');
+          style.textContent = `
+            .kp-touch {
+              position: absolute;
+              left: 50%;
+              top: 0;
+              width: 44px;
+              height: 44px;
+              margin-left: -22px;
+              margin-top: -22px;
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.4);
+              border: 1px solid rgba(255, 255, 255, 0.9);
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+              backdrop-filter: blur(2px);
+              z-index: 10;
+              pointer-events: none;
+              opacity: 0;
+              transform: translateY(0);
+              transition: opacity 0.25s ease;
+            }
+          `;
+          root.appendChild(style);
+          const cursor = document.createElement('div');
+          cursor.className = 'kp-touch';
+          const device = root.querySelector('.device');
+          device.appendChild(cursor);
+          return cursor;
+        }
+
+        function tryStart() {
+          const sheet = phone.shadowRoot && phone.shadowRoot.querySelector('.cr-sheet');
+          if (!sheet) {
+            requestAnimationFrame(tryStart);
+            return;
+          }
+          const max = sheet.scrollHeight - sheet.clientHeight;
+          if (max <= 0) return;
+          const target = Math.min(max, Math.round(max * 0.85));
+
+          const cursor = injectCursor(phone.shadowRoot);
+          // Cursor travels within the visible sheet area (device coords ~110→864).
+          // Finger drags up while content scrolls down, then drags down on the way back.
+          const yLow = 640;
+          const yHigh = 240;
+
+          async function runOnce() {
+            cursor.style.transform = `translateY(${yLow}px)`;
+            await wait(50);
+            cursor.style.opacity = '1';
+            await wait(350);
+
+            let hidden = false;
+            await animate(1800, (e) => {
+              sheet.scrollTop = e * target;
+              cursor.style.transform = `translateY(${yLow + (yHigh - yLow) * e}px)`;
+              if (!hidden && e >= 0.85) {
+                hidden = true;
+                cursor.style.opacity = '0';
+              }
+            });
+            await wait(3500);
+            await animate(1400, (e) => {
+              sheet.scrollTop = target * (1 - e);
+            });
+            await wait(3500);
+          }
+
+          setTimeout(async () => {
+            while (true) {
+              await runOnce();
+            }
+          }, 700);
+        }
+
+        if (document.readyState === 'complete') tryStart();
+        else window.addEventListener('load', tryStart, { once: true });
+      })();
+    </script>
 
     <!-- Narrative -->
     <section class="kp-narrative">
-      <h2>AI 시대의 검색,어떤 방식으로 정보를 구조화하고 문제를 풀어야 할까?</h2>
-      <p>검색 결과 자체가 완성된 콘텐츠로 확장되는 경험, 기존 통합검색 서비스를 AI 검색으로 피봇하는 서비스 개편입니다. 모듈 시스템을 기반으로 정보 구조를 정의해, 기존 검색결과를 단일 페이지 콘텐츠로 제공할 경우 구조적 복잡성과 정보별 품질 편차가 발생한다는 인사이트를 기반으로, 검색 결과를 보다 구조적이고 안정적으로 제공할 수 있는 방향을 도출했습니다.</p>
+      <h2>AI 시대의 검색, 검색 결과 자체가 완성된 콘텐츠로 확장되는 경험,</h2>
+      <p>어떤 방식으로 정보를 구조화하고 문제를 풀어야 할까? 기존 통합검색 서비스를 AI 검색으로 피봇하는 서비스 개편입니다. 모듈 시스템을 기반으로 정보 구조를 정의해, 기존 검색결과를 단일 페이지 콘텐츠로 제공할 경우 구조적 복잡성과 정보별 품질 편차가 발생한다는 인사이트를 기반으로, 검색 결과를 보다 구조적이고 안정적으로 제공할 수 있는 방향을 도출했습니다.</p>
     </section>
 
     <!-- Process diagram -->
     <section class="kp-section">
-      <figure class="kp-figure">
-        <img src="../../assets/kanana/process.png" alt="모듈 구조 다이어그램: Header / Templete / Markdown / Feedback + related question" />
-      </figure>
-    </section>
-
-    <!-- 3-phone module showcase (image / Body + image / Image + link) -->
-    <section class="kp-section">
-      <figure class="kp-figure kp-figure-plain">
-        <img src="../../assets/kanana/modules.png" alt="모듈 유형 — image, Body + image, Image + link" />
+      <figure class="kp-figure kp-process">
+        <div class="kp-process-labels">
+          <img src="../../assets/kanana/module-name-01.svg" alt="Header" />
+          <img src="../../assets/kanana/module-name-02.svg" alt="Templete" />
+          <img src="../../assets/kanana/module-name-03.svg" alt="Markdown" />
+          <img src="../../assets/kanana/module-name-04.svg" alt="Feedback + related question" />
+        </div>
+        <div class="kp-process-phones">
+          <img src="../../assets/kanana/module01.svg" alt="" />
+          <img src="../../assets/kanana/module02.svg" alt="" />
+          <img src="../../assets/kanana/module03.svg" alt="" />
+        </div>
       </figure>
     </section>
 
@@ -226,28 +548,59 @@
       <p>모듈 유형별 타입, 타입에 들어갈 수 있는 컴포넌트로 구성했습니다. 이는 자연스럽게 모바일/웹 환경에서 일관된 사용성·비주얼·정보 구조로 이어졌습니다.이를 통해 사용자는 콘텐츠가 달라져도 동일한 경험 안에서 추가 학습 없이 원하는 정보를 빠르게 찾을 수 있습니다.</p>
     </section>
 
-    <!-- Weather 4-phone row -->
-    <section class="kp-section">
-      <figure class="kp-figure kp-figure-plain">
-        <img src="../../assets/kanana/weather.png" alt="날씨 템플릿 변형 4종" />
+    <!-- 3-phone module showcase (image / Body + image / Image + link) -->
+    <section class="kp-section kp-section-modulecase">
+      <figure class="kp-figure kp-modulecase">
+        <div class="kp-modulecase-row">
+          <div class="kp-modulecase-item">
+            <img src="../../assets/kanana/modulecase-01.svg" alt="Image" />
+            <p class="kp-modulecase-label">Image</p>
+          </div>
+          <div class="kp-modulecase-item">
+            <img src="../../assets/kanana/modulecase-02.svg" alt="Body + image" />
+            <p class="kp-modulecase-label">Body + image</p>
+          </div>
+          <div class="kp-modulecase-item">
+            <img src="../../assets/kanana/modulecase-03.svg" alt="Image + link" />
+            <p class="kp-modulecase-label">Image + link</p>
+          </div>
+        </div>
       </figure>
-      <p class="kp-section-label">Templete Weather</p>
+    </section>
+
+    <!-- Weather 4-phone row -->
+    <section class="kp-section kp-section-weather">
+      <p class="kp-section-label kp-section-label-top">Templete Weather</p>
+      <figure class="kp-figure kp-weather">
+        <div class="kp-weather-row">
+          <img src="../../assets/kanana/weather-01.svg" alt="" />
+          <img src="../../assets/kanana/weather-02.svg" alt="" />
+          <img src="../../assets/kanana/weather-03.svg" alt="" />
+          <img src="../../assets/kanana/weather-04.svg" alt="" />
+        </div>
+      </figure>
     </section>
 
     <!-- Stock template (phone + macOS popup) -->
-    <section class="kp-section">
-      <figure class="kp-figure kp-figure-plain">
-        <img src="../../assets/kanana/stock-full.png" alt="주식 템플릿 — 모바일 + 데스크탑 팝업" />
-      </figure>
-      <p class="kp-section-label">Templete Stock</p>
+    <section class="kp-section kp-section-weather">
+      <p class="kp-section-label kp-section-label-top">Templete Stock</p>
+      <div class="kp-stock-grid">
+        <figure class="kp-stock-plate kp-stock-plate-gray">
+          <img src="../../assets/kanana/stock-mobile.svg" alt="주식 템플릿 — 모바일 채팅룸" />
+        </figure>
+        <figure class="kp-stock-plate kp-stock-plate-bg">
+          <img src="../../assets/kanana/stock-pc.svg" alt="주식 템플릿 — 데스크탑 팝업" />
+        </figure>
+      </div>
     </section>
 
     <!-- Place template (phone + iPad) -->
-    <section class="kp-section">
-      <figure class="kp-figure kp-figure-plain">
-        <img src="../../assets/kanana/place.png" alt="장소 템플릿 — 모바일 + iPad" />
+    <section class="kp-section kp-section-weather">
+      <p class="kp-section-label kp-section-label-top">Templete Place</p>
+      <figure class="kp-figure kp-place">
+        <img class="kp-place-mobile" src="../../assets/kanana/place-mobile.svg" alt="장소 템플릿 — 모바일 채팅룸" />
+        <img class="kp-place-ipad" src="../../assets/kanana/place-ipad.svg" alt="장소 템플릿 — iPad" />
       </figure>
-      <p class="kp-section-label">Templete Place</p>
     </section>
 
     <!-- Inline footer matching Figma -->
