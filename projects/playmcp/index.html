@@ -110,13 +110,28 @@
       height: auto;
       transition: transform 0.4s ease;
     }
-    /* Crop a couple of pixels off each edge to hide the .mov file's
-       seam/border artifacts that show up against the gray plate. */
-    .kp-hero video {
-      clip-path: inset(2px);
+    .kp-hero .laptop-wrap {
+      width: 100%;
+      max-width: 600px;
+      transition: transform 0.4s ease;
     }
+    .kp-hero .laptop-frame {
+      max-width: none;
+      transition: none;
+      transform: none;
+    }
+    .kp-hero .laptop-screen {
+      max-width: none;
+      width: 58%;
+      height: 65%;
+      transform: translateY(24px);
+      transition: none;
+    }
+    .kp-hero:hover .laptop-wrap { transform: none; }
+    .kp-hero:hover .laptop-frame { transform: none; }
+    .kp-hero:hover .laptop-screen { transform: translateY(24px); }
     .kp-hero:hover img,
-    .kp-hero:hover video { transform: scale(1.02); }
+    .kp-hero:hover video { transform: none; }
 
     /* Narrative — heading + body paragraph */
     .kp-narrative {
@@ -370,6 +385,7 @@
   </style>
 </head>
 <body>
+  <script>if (localStorage.getItem('theme') === 'dark') document.body.classList.add('is-dark');</script>
   <main class="kp-wrap">
     <a href="../../" class="kp-close" aria-label="Close">
       <img src="../../assets/detailclose.svg" alt="" />
@@ -389,9 +405,12 @@
 
     <!-- Hero: laptop video on light plate -->
     <section class="kp-hero">
-      <video autoplay loop muted playsinline preload="metadata" poster="../../assets/playmcp/hero.png">
-        <source src="../../assets/playmcp/hero.mov" type="video/mp4" />
-      </video>
+      <div class="laptop-wrap">
+        <img class="laptop-frame" src="../../assets/laptop.png" alt="Play MCP laptop mockup" />
+        <video class="laptop-screen" autoplay loop muted playsinline preload="metadata">
+          <source src="../../assets/playmcp-screen.mov" type="video/mp4" />
+        </video>
+      </div>
     </section>
 
     <!-- Narrative -->
